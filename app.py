@@ -30,7 +30,36 @@ def extrair_texto(pdf_file):
             texto += page.get_text()
     return texto
 
+
+def normalizar_linha(linha):
+    linha = linha.lower().strip()
+    linha = re.sub(r'\s+', ' ', linha)
+    linha = linha.replace(":", "")
+    return linha
+
 def classificar_exames(texto):
+    linhas = texto.lower().splitlines()
+    dados = {secao: [] for secao in secoes_lab}
+    dados["Outros"] = []
+    vistos = set()
+
+    for linha in linhas:
+        l = linha.strip()
+        if not l or any(p in l for p in ruidos): continue
+        chave = normalizar_linha(l)
+        if chave in vistos: continue
+        vistos.add(chave)
+
+        adicionou = False
+        for secao, termos in secoes_lab.items():
+            if any(t in chave for t in termos):
+                dados[secao].append(l.capitalize())
+                adicionou = True
+                break
+        if not adicionou and ":" in l:
+            dados["Outros"].append(l.capitalize())
+    return dados
+
     linhas = texto.lower().splitlines()
     dados = {secao: [] for secao in secoes_lab}
     dados["Outros"] = []
