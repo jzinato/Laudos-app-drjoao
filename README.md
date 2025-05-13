@@ -1,1 +1,1 @@
-Aplicativo de Laudos – Dr. João Batista Zinato. Layout personalizado com logo, integração Supabase e laudo profissional.
+Aplicativo para geração de laudos clínicos estruturados com Supabase.
