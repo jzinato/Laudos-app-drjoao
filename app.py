@@ -82,37 +82,37 @@ def limpar_texto(texto):
     return texto.strip()
 
 def gerar_docx_laboratorial(nome, data, dados):
+    from docx.shared import Pt
+
     doc = Document()
-    section = doc.sections[0]
+    doc.add_heading("Relatório de Exames Laboratoriais", 0)
+    
+    p1 = doc.add_paragraph()
+    run1 = p1.add_run(f"Paciente: {nome}")
+    run1.bold = True
+    run1.font.size = Pt(11)
 
-    header = section.header.paragraphs[0]
-    run = header.add_run()
-    run.add_picture("logo.png", width=Inches(2.5))
-    header.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p2 = doc.add_paragraph()
+    run2 = p2.add_run(f"Data da coleta: {data}")
+    run2.font.size = Pt(10)
 
-    doc.add_paragraph().add_run()
-    title = doc.add_heading("Exame Laboratorial", 0)
-    title.alignment = WD_ALIGN_PARAGRAPH.CENTER
-
-    doc.add_paragraph(f"Paciente: {nome}").paragraph_format.space_after = Pt(6)
-    doc.add_paragraph(f"Data da coleta: {data}").paragraph_format.space_after = Pt(12)
+    doc.add_paragraph("")
 
     for secao, itens in dados.items():
         if itens:
             doc.add_heading(secao, level=1)
             for item in itens:
-                texto_limpo = limpar_texto(item)
-                if texto_limpo:
-                    doc.add_paragraph(texto_limpo, style="List Bullet")
-
-    rodape = section.footer.paragraphs[0]
-    rodape.text = "Dr. João Batista Zinato – CRM 42099"
-    rodape.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    rodape.runs[0].font.size = Pt(9)
+                try:
+                    texto_limpo = "".join(c for c in item if 32 <= ord(c) <= 126 or c in "\n\t .,:-_/()[]%")
+                    doc.add_paragraph(texto_limpo.strip(), style="List Bullet")
+                except Exception:
+                    doc.add_paragraph("**Erro ao processar item**", style="List Bullet")
+            doc.add_paragraph("-" * 40)
 
     output = BytesIO()
     doc.save(output)
     return output.getvalue()
+
 
 def gerar_docx_imagem(nome, data, texto):
     doc = Document()
