@@ -64,8 +64,7 @@ def gerar_docx_laboratorial(nome, data, dados):
             doc.add_heading(secao, level=1)
             for item in itens:
                 try:
-                    texto_limpo = "".join(c for c in item if 32 <= ord(c) <= 126 or c in "
-	 .,:-_/()[]%")
+                    texto_limpo = "".join(c for c in item if 32 <= ord(c) <= 126 or c in "\n\t .,:-_/()[]%")
                     doc.add_paragraph(texto_limpo.strip(), style="List Bullet")
                 except Exception:
                     doc.add_paragraph("Erro ao processar item.", style="List Bullet")
