@@ -1,1 +1,1 @@
-Aplicativo para geração de laudos clínicos estruturados com Supabase.
+Aplicativo para geração de laudos clínicos com Supabase.
